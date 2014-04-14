@@ -7,13 +7,12 @@
 (define (false? x)
  (eq? x false))
 
-
 ; eval
 (define (eval exp env)
   (cond ((self-evaluating? exp) exp)
         ((variable? exp) (lookup-variable-value exp env))
-        ((quoted? exp) (text-of-quotation exp))
-        ((assignment? exp) (eval-assignment exp env))
+        ((quoted? exp) (text-of-quotation exp env))
+        ((assignment? exp) (eval-assignment exp env)) ;; q4.33
         ((definition? exp) (eval-definition exp env))
         ((if? exp) (eval-if exp env))
         ((lambda? exp)
@@ -23,7 +22,7 @@
         ((begin? exp) 
          (eval-sequence (begin-actions exp) env))
         ((cond? exp) (eval (cond->if exp) env))
-        ((unless? exp) (analyze (unless->if exp)))            ; q4.26
+        ((unless? exp) (analyze (unless->if exp)))
         ((application? exp)
          (my-apply (actual-value (operator exp) env)
                    (operands exp)
@@ -149,8 +148,16 @@
 (define (quoted? exp)
  (tagged-list? exp 'quote))
 
-(define (text-of-quotation exp) (cadr exp))
+(define (text-of-quotation exp env)
+  (let ((unquoted (cadr exp)))
+    (if (pair? unquoted)
+        (eval #?=(convert-to-cons unquoted) env)
+        unquoted)))
 
+(define (convert-to-cons list-exp)
+  (if (null? list-exp)
+      '()
+      (list 'cons (car list-exp) (convert-to-cons (cdr list-exp)))))
 
 ; assignment
 (define (assignment? exp)
