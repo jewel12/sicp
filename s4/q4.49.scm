@@ -21,9 +21,20 @@
 
 ;; parse-wordをword-listから適当に選んで返すようにする
 ;; 停止条件を満たすために*unparsed*はここで空にしておく
+
+;; an-element-of を使ったバージョン
+;; (define (an-element-of items)
+;;   (require (not (null? items)))
+;;   (amb (car items) (an-element-of (cdr items))))
+
+;; (define (parse-word word-list)
+;;   (set! *unparsed* '())
+;;   (list (car word-list) (an-element-of (cdr word-list))))
+
 (define (parse-word word-list)
   (set! *unparsed* '())
-  (list (car word-list) (at (random-integer (length (cdr word-list))) (cdr word-list))))
+  (list (car word-list) (at (random-integer (length (cdr word-list))
+                                            (cdr word-list)))))
 
 (define (at i l)
   (define (search l j)
