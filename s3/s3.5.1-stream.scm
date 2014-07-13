@@ -41,9 +41,9 @@
                result)
         result))))
 (define-macro (delay exp) `(memo-proc (lambda () ,exp)))
-;(define (cons-stream a b) (cons a (delay b)))
-(define-macro (cons-stream a b)
-  `(cons ,a (delay ,b)))
+(define (cons-stream a b) (cons a (delay b)))
+;; (define-macro (cons-stream a b)
+;;   `(cons ,a (delay ,b)))
 
 (define (stream-enumerate-interval low high)
   (if (> low high)
