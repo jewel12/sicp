@@ -386,15 +386,15 @@
 (define (label-exp? exp) (tagged-list? exp 'label))
 (define (label-exp-label exp) (cadr exp))
 
-
 (define (make-operation-exp exp machine labels operations)
  ; q5.9
  (map (lambda (operands)
        (if (or (register-exp? operands)
                 (constant-exp? operands)
+                (label-exp? operands)
            )
             true
-            (error "Operand must be register or constant")
+            (error "Operand must be register or constant or label")
        ))(operation-exp-operands exp))
  (let ((op (lookup-prim (operation-exp-op exp) operations))
        (aprocs
